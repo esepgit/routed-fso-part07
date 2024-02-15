@@ -7,6 +7,7 @@ import loginService from "./services/loginService";
 import Notification from "./components/Notification";
 import { useDispatch } from 'react-redux'
 import { setNotification } from "./reducers/notificationReducer";
+import Users from "./components/Users";
 
 const App = () => {
   const dispatch = useDispatch()
@@ -105,7 +106,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <Notification message={notificationMessage} />
+      <Notification />
       <p>
         {user.name} logged in{" "}
         <button id="btn-logout" onClick={handleLogout}>
@@ -116,6 +117,8 @@ const App = () => {
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
         <BlogForm createBlog={addBlog} />
       </Togglable>
+
+      <Users />
 
       <div className="blogs-container">
         {blogSorted.map((blog) => (
