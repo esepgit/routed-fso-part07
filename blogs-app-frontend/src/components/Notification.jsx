@@ -1,11 +1,15 @@
-const Notification = ({ message }) => {
+import { useSelector } from 'react-redux'
+
+const Notification = () => {
+  const message = useSelector(({ notification }) => notification.message)
+
   const notificationStyle = {
     backgroundColor: "rgb(51, 181, 255)",
     color: "#FFF",
     padding: 2,
     margin: 5,
   };
-  if (message === null) {
+  if (message === '') {
     return null;
   }
 
@@ -16,4 +20,4 @@ const Notification = ({ message }) => {
   );
 };
 
-export default Notification;
+export default Notification; 

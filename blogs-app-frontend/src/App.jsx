@@ -5,13 +5,16 @@ import BlogForm from "./components/BlogForm";
 import blogService from "./services/blogService";
 import loginService from "./services/loginService";
 import Notification from "./components/Notification";
+import { useDispatch } from 'react-redux'
+import { setNotification } from "./reducers/notificationReducer";
 
 const App = () => {
+  const dispatch = useDispatch()
+
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  const [notificationMessage, setNotificationMessage] = useState(null);
 
   let blogSorted = blogs;
   blogSorted.sort((a, b) => b.likes - a.likes);
@@ -37,10 +40,7 @@ const App = () => {
       setUsername("");
       setPassword("");
     } catch (exception) {
-      setNotificationMessage("wrong username or password");
-      setTimeout(() => {
-        setNotificationMessage(null);
-      }, 5000);
+      dispatch(setNotification("wrong username or password"));
     }
   };
 
@@ -52,10 +52,7 @@ const App = () => {
   const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility();
     blogService.create(blogObject).then((returnedBlog) => {
-      setNotificationMessage("Blog created");
-      setTimeout(() => {
-        setNotificationMessage(null);
-      }, 5000);
+      dispatch(setNotification('Blog created'))
       console.log(returnedBlog);
       setBlogs(blogs.concat(returnedBlog));
     });
@@ -78,10 +75,10 @@ const App = () => {
     return (
       <div>
         <h2>Log in to application</h2>
-        <Notification message={notificationMessage} />
+        <Notification />
         <form onSubmit={handleLogin}>
           <div>
-            username
+            username 
             <input
               id="username"
               value={username}
