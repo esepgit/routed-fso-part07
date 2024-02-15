@@ -8,6 +8,10 @@ import Notification from "./components/Notification";
 import { useDispatch } from 'react-redux'
 import { setNotification } from "./reducers/notificationReducer";
 import Users from "./components/Users";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import User from "./components/User";
+import userService from "./services/userService";
+import BlogDetail from "./components/BlogDetail";
 
 const App = () => {
   const dispatch = useDispatch()
@@ -16,6 +20,7 @@ const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
+  const [users, setUsers] = useState([]);
 
   let blogSorted = blogs;
   blogSorted.sort((a, b) => b.likes - a.likes);
@@ -23,6 +28,7 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
+    userService.getAll().then((users) => setUsers(users));
   }, []);
 
   const handleLogin = async (event) => {
@@ -104,34 +110,57 @@ const App = () => {
   }
 
   return (
-    <div>
-      <h2>blogs</h2>
-      <Notification />
-      <p>
-        {user.name} logged in{" "}
-        <button id="btn-logout" onClick={handleLogout}>
-          logout
-        </button>
-      </p>
-
-      <Togglable buttonLabel="new blog" ref={blogFormRef}>
-        <BlogForm createBlog={addBlog} />
-      </Togglable>
-
-      <Users blogs={blogs} />
-
-      <div className="blogs-container">
-        {blogSorted.map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            updateLikes={updateLikes}
-            user={user}
-            removeBlog={removeBlog}
-          />
-        ))}
+    <BrowserRouter>
+      <div>
+        <Link to="/blogs">blogs </Link>
+        <Link to="/users">users </Link>
+        <span>
+          {user.name} logged in{" "}
+          <button id="btn-logout" onClick={handleLogout}>
+            logout
+          </button>
+        </span>
       </div>
-    </div>
+      <Notification />
+      <h1>Blog App</h1>
+      <Routes>
+        <Route
+          path="/blogs"
+          element={
+            <>
+              <h2>blogs</h2>
+
+              <Togglable buttonLabel="new blog" ref={blogFormRef}>
+                <BlogForm createBlog={addBlog} />
+              </Togglable>
+
+              <div className="blogs-container">
+                {blogSorted.map((blog) => (
+                  <Blog
+                    key={blog.id}
+                    blog={blog}
+                    updateLikes={updateLikes}
+                    user={user}
+                    removeBlog={removeBlog}
+                  />
+                ))}
+              </div>
+            </>
+          }
+        />
+
+        <Route
+          path="/blogs/:id"
+          element={<BlogDetail blogs={blogs} user={user} />}
+        />
+
+        <Route path="/users" element={<Users blogs={blogs} users={users} />} />
+        <Route
+          path="/users/:id"
+          element={<User users={users} blogs={blogs} />}
+        />
+      </Routes>
+    </BrowserRouter>
   );
 };
 
