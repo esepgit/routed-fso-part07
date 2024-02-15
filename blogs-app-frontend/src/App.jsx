@@ -118,7 +118,7 @@ const App = () => {
         <BlogForm createBlog={addBlog} />
       </Togglable>
 
-      <Users />
+      <Users blogs={blogs} />
 
       <div className="blogs-container">
         {blogSorted.map((blog) => (
