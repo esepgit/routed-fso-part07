@@ -1,8 +1,9 @@
 import { useParams } from "react-router-dom";
 
 function BlogDetail({ user, blogs, updateLikes }) {
+  console.log(blogs)
   const blogId = useParams().id
-  const blog = blogs.find(b => b.id = blogId)
+  const blog = blogs.find(b => b.id === blogId)
   
   const handleLike = (id) => {
     const likes = blog.likes + 1;
@@ -27,7 +28,8 @@ function BlogDetail({ user, blogs, updateLikes }) {
 
   return (
     <section>
-        <div>{blog.url}</div>
+      <h2>{blog.title}</h2>
+        <a href={blog.url}>{blog.url}</a>
         <div>
           likes {blog.likes}{" "}
           <button id="btn-like" onClick={() => handleLike(blog.id)}>
@@ -42,6 +44,12 @@ function BlogDetail({ user, blogs, updateLikes }) {
         ) : (
           ""
         )}
+        <div>
+          <h3>comments</h3>
+            <ul>
+              {blog.comments.map(comment => <li key={comment.id}>{comment.content}</li>)}
+            </ul>
+        </div>
     </section>
   );
 }
