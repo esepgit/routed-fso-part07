@@ -12,6 +12,7 @@ import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import User from "./components/User";
 import userService from "./services/userService";
 import BlogDetail from "./components/BlogDetail";
+import commentService from "./services/commentService";
 
 const App = () => {
   const dispatch = useDispatch()
@@ -64,6 +65,17 @@ const App = () => {
       setBlogs(blogs.concat(returnedBlog));
     });
   };
+
+  const addComment = (id, comment) => {
+    commentService.create(`/${id}/comments`, comment).then(returnedComment => {
+      dispatch(setNotification('Comment created'))
+      const blog = blogs.find(b => b.id === id)
+      const updatedBlog = {
+        ...blog, comments: [...blog.comments, returnedComment]
+      }
+      setBlogs(blogs.map(b => b.id === id ? updatedBlog : b))
+    })
+  }
 
   const updateLikes = (id, blogObject) => {
     blogService.update(id, blogObject).then((returnedBlog) => {
@@ -151,7 +163,7 @@ const App = () => {
 
         <Route
           path="/blogs/:id"
-          element={<BlogDetail blogs={blogs} user={user} />}
+          element={<BlogDetail blogs={blogs} user={user} addComment={addComment} />}
         />
 
         <Route path="/users" element={<Users blogs={blogs} users={users} />} />
