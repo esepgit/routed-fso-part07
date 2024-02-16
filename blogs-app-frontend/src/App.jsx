@@ -14,6 +14,8 @@ import userService from "./services/userService";
 import BlogDetail from "./components/BlogDetail";
 import commentService from "./services/commentService";
 
+import { Form, Button, Navbar, Nav, Container } from "react-bootstrap";
+
 const App = () => {
   const dispatch = useDispatch()
 
@@ -92,87 +94,101 @@ const App = () => {
 
   if (user === null) {
     return (
-      <div>
-        <h2>Log in to application</h2>
+      <div className="container">
         <Notification />
-        <form onSubmit={handleLogin}>
-          <div>
-            username 
-            <input
+        <h2>Log in to application</h2>
+        <Form onSubmit={handleLogin}>
+          <Form.Group>
+            <Form.Label>Username</Form.Label>
+            <Form.Control
               id="username"
+              placeholder="Enter username"
               value={username}
               onChange={({ target }) => setUsername(target.value)}
               name="Username"
             />
-          </div>
-          <div>
-            password
-            <input
+            <Form.Label>Password</Form.Label>
+            <Form.Control
               id="password"
+              placeholder="Password"
               type="password"
               value={password}
               onChange={({ target }) => setPassword(target.value)}
               name="Password"
             />
-          </div>
-          <button>login</button>
-        </form>
+          </Form.Group>
+
+          <Button type="submit" className="mt-2">Login</Button>
+        </Form>
       </div>
     );
   }
 
   return (
-    <BrowserRouter>
-      <div>
-        <Link to="/blogs">blogs </Link>
-        <Link to="/users">users </Link>
-        <span>
-          {user.name} logged in{" "}
-          <button id="btn-logout" onClick={handleLogout}>
-            logout
-          </button>
-        </span>
-      </div>
-      <Notification />
-      <h1>Blog App</h1>
-      <Routes>
-        <Route
-          path="/blogs"
-          element={
-            <>
-              <h2>blogs</h2>
+    <div className="container">
+      <BrowserRouter>
+        <Navbar bg="dark" data-bs-theme="dark">
+            <Nav>
+              <Nav.Link as="span">
+                <Link to="/blogs">blogs </Link>
+              </Nav.Link>
+              <Nav.Link as="span">
+                <Link to="/users">users </Link>
+              </Nav.Link>
+              <span className="text-white">
+                {user.name} logged in{" "}
+                <Button size="sm" id="btn-logout" onClick={handleLogout}>
+                  logout
+                </Button>
+              </span>
+            </Nav>
+        </Navbar>
+        <Notification />
+        <h1>Blog App</h1>
+        <Routes>
+          <Route
+            path="/blogs"
+            element={
+              <>
+                <h2>blogs</h2>
 
-              <Togglable buttonLabel="new blog" ref={blogFormRef}>
-                <BlogForm createBlog={addBlog} />
-              </Togglable>
+                <Togglable buttonLabel="new blog" ref={blogFormRef}>
+                  <BlogForm createBlog={addBlog} />
+                </Togglable>
 
-              <div className="blogs-container">
-                {blogSorted.map((blog) => (
-                  <Blog
-                    key={blog.id}
-                    blog={blog}
-                    updateLikes={updateLikes}
-                    user={user}
-                    removeBlog={removeBlog}
-                  />
-                ))}
-              </div>
-            </>
-          }
-        />
+                <div className="blogs-container">
+                  {blogSorted.map((blog) => (
+                    <Blog
+                      key={blog.id}
+                      blog={blog}
+                      updateLikes={updateLikes}
+                      user={user}
+                      removeBlog={removeBlog}
+                    />
+                  ))}
+                </div>
+              </>
+            }
+          />
 
-        <Route
-          path="/blogs/:id"
-          element={<BlogDetail blogs={blogs} user={user} addComment={addComment} />}
-        />
+          <Route
+            path="/blogs/:id"
+            element={
+              <BlogDetail updateLikes={updateLikes} removeBlog={removeBlog} blogs={blogs} user={user} addComment={addComment} />
+            }
+          />
 
-        <Route path="/users" element={<Users blogs={blogs} users={users} />} />
-        <Route
-          path="/users/:id"
-          element={<User users={users} blogs={blogs} />}
-        />
-      </Routes>
-    </BrowserRouter>
+          <Route
+            path="/users"
+            element={<Users blogs={blogs} users={users} />}
+          />
+          <Route
+            path="/users/:id"
+            element={<User users={users} blogs={blogs} />}
+          />
+        </Routes>
+      </BrowserRouter>
+    </div>
   );
 };
 
